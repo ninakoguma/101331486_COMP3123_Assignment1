@@ -25,9 +25,13 @@ app.use(limiter);
 
 // adding logger for vercel 
 const localLogger = (req, res, next) => {
-    if (process.env.NODE_ENV !== 'production') {
-        const logEntry = `[${new Date().toISOString()}] ${req.method} ${req.url}\n`;
-        fs.appendFileSync(path.join(__dirname, 'app.log'), logEntry);
+    try {
+        if (process.env.NODE_ENV !== 'production') {
+            const logEntry = `[${new Date().toISOString()}] ${req.method} ${req.url}\n`;
+            fs.appendFileSync(path.join(__dirname, 'app.log'), logEntry);
+        }
+    } catch (err) {
+        // ignore write errors on read-only systems
     }
     next();
 };
